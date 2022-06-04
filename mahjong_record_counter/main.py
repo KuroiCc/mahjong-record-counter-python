@@ -62,7 +62,7 @@ def main():
     put_button(label='追加', onclick=lambda: add_score(123))
 
     def add_score(score: list[int, int, int, int]):
-        # TODO: オカに対応していない
+        # TODO: オカなしに対応していない
         with use_scope('score'):
             put_html('<h1>スコア</h1>')
             put_text(
