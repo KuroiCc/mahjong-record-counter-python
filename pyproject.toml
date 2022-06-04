@@ -7,11 +7,15 @@ authors = ["Kuroi_Cc <ChenchengMiKuRo@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 pywebio = "^1.6.1"
+pydantic = "^1.9.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 flake8 = "^4.0.1"
 yapf = "^0.32.0"
+
+[tool.poetry.scripts]
+start = "mahjong_record_counter.py"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
