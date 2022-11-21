@@ -4,6 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Kuroi_Cc <ChenchengMiKuRo@gmail.com>"]
 
+[tool.poetry.scripts]
+start = "mahjong_record_counter:run"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pywebio = "^1.6.1"
