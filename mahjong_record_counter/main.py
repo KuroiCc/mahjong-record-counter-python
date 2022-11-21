@@ -1,9 +1,10 @@
 from typing import Optional
+import os
 
 from pywebio import start_server
-from pywebio.input import input_group, checkbox, select, input, NUMBER
+from pywebio.input import NUMBER, checkbox, input, input_group, select
+from pywebio.output import put_button, put_html, put_text, use_scope
 from pywebio.pin import pin, put_input
-from pywebio.output import put_text, put_html, use_scope, put_button
 
 import mahjong_record_counter.interface as IF
 
@@ -73,5 +74,13 @@ def main():
             )
 
 
+def run():
+    start_server(
+        main,
+        port=os.getenv('COUNT_POINT_PORT'),
+        allowed_origins=['*'],
+    )
+
+
 if __name__ == '__main__':
-    start_server(main, port=8080, debug=True)
+    run()
