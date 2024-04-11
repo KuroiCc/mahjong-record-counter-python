@@ -13,7 +13,7 @@ pywebio = "^1.6.1"
 pydantic = "^1.9.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.1.2"
 flake8 = "^4.0.1"
 yapf = "^0.32.0"
 
