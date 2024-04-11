@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "pywebio"
+        "pywebio",
+        "uvicorn",
+        "webio"
     ]
 }
