@@ -1,5 +1,3 @@
-export COUNT_POINT_PORT=39002
+#! /bin/bash
 
-export PYTHONPATH=/home/kuroi_cc/git-repositorys/mahjong-record-counter-python
-
-`nohup python3 mahjong_record_counter/main.py > port.txt 2>&1 &` ; echo $!
+`nohup poetry run start >> $PROJECTS/mahjong-record-counter-python/mahjong_record_counter/logs/server.log 2>&1 &` ; echo $!
