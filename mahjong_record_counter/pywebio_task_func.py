@@ -4,7 +4,7 @@ from typing import Optional
 from pywebio import start_server
 from pywebio.input import NUMBER, TEXT, input, input_group, select
 from pywebio.output import put_button, put_html, put_row, put_text, use_scope, toast
-from pywebio.pin import pin, put_input
+from pywebio.pin import pin, put_input, pin_update
 from pywebio.session import eval_js
 
 from mahjong_record_counter.interface import GameSetting, PlayerRecord
@@ -122,6 +122,9 @@ def pywebio_task_func():
         )
         with use_scope("score"):
             put_text(res_text)
+
+        for ind, _ in position_ind_name:
+            pin_update(f"{ind}_score", value="")
 
 
 def run():
