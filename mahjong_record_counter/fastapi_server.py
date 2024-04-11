@@ -61,6 +61,6 @@ def run_server():
         uvicorn.run(
             "mahjong_record_counter.fastapi_server:app",
             host="0.0.0.0",
-            port=os.getenv("COUNT_POINT_PORT"),
+            port=int(os.getenv("COUNT_POINT_PORT")),
             env_file=".env.prod",
         )
