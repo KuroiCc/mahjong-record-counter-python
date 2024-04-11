@@ -1,5 +1,5 @@
-from .main import run
+from .fastapi_server import run_server
 
-__all__ = ['run']
+__all__ = ["run_server"]
 
-__version__ = '0.1.0'
+__version__ = "0.1.0"
