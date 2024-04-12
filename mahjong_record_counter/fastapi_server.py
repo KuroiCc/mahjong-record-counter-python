@@ -141,4 +141,5 @@ def run_server():
             host="0.0.0.0",
             port=int(os.getenv("COUNT_POINT_PORT")),
             env_file=".env.prod",
+            root_path=os.getenv("COUNT_POINT_ROOT_PATH", ""),
         )
