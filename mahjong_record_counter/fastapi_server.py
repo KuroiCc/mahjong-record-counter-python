@@ -3,7 +3,8 @@ import os
 import secrets
 from pathlib import Path
 
-from fastapi import Body, Depends, FastAPI, HTTPException, status
+from fastapi import Body, Depends, FastAPI, HTTPException, Request, status
+from fastapi.responses import PlainTextResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pywebio.platform.fastapi import webio_routes
 
@@ -65,6 +66,21 @@ def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
             headers={"WWW-Authenticate": "Basic"},
         )
     return credentials
+
+
+@app.middleware("http")
+async def secure_docs(request: Request, call_next):
+    if not app.debug and request.url.path in ["/docs", "/openapi.json"]:
+        try:
+            authenticate(await security(request))
+        except HTTPException as exc:
+            return PlainTextResponse(
+                str(exc.detail),
+                status_code=exc.status_code,
+                headers=exc.headers,
+            )
+
+    return await call_next(request)
 
 
 # MARK: - Routes
