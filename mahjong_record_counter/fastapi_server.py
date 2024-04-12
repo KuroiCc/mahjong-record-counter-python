@@ -1,22 +1,54 @@
 import json
 import os
 import secrets
+from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Body, Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pywebio.platform.fastapi import webio_routes
 
 from mahjong_record_counter.pywebio_task_func import pywebio_task_func
 
-app = FastAPI()
-
-security = HTTPBasic()
+app = FastAPI(debug=bool(os.environ.get("DEBUG", "False")))
 
 
-def read_json_file():
-    with open("common_players.json", "r") as file:
+# MARK: - Service functions
+
+data_store_path = Path("common_players.json")
+
+
+def read_json_file() -> list[str]:
+    with data_store_path.open("r") as file:
         data = json.load(file)
     return data
+
+
+def add_common_player(player_name: str) -> list[str]:
+    data = read_json_file()
+    if player_name not in data:
+        data.append(player_name)
+    with data_store_path.open("w") as file:
+        json.dump(data, file, ensure_ascii=False)
+
+    return data
+
+
+def remove_common_player(player_name: str) -> list[str] | None:
+    data = read_json_file()
+
+    if player_name not in data:
+        return None
+
+    data.remove(player_name)
+
+    with data_store_path.open("w") as file:
+        json.dump(data, file, ensure_ascii=False)
+
+    return data
+
+
+# MARK: - Dependency
+security = HTTPBasic()
 
 
 def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
@@ -35,21 +67,51 @@ def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
     return credentials
 
 
-@app.get("/common_players", dependencies=[Depends(authenticate)])
+# MARK: - Routes
+@app.get(
+    "/common_players",
+    dependencies=[Depends(authenticate)],
+    response_model=list[str],
+)
 def get_common_players():
     data = read_json_file()
+    return data
+
+
+@app.put(
+    "/common_players",
+    dependencies=[Depends(authenticate)],
+    response_model=list[str],
+)
+def put_common_player(player_name: str = Body(...)):
+    data = add_common_player(player_name)
+    return data
+
+
+@app.delete(
+    "/common_players/{player_name}",
+    dependencies=[Depends(authenticate)],
+    response_model=list[str],
+)
+def delete_common_player(player_name: str):
+    data = remove_common_player(player_name)
+    if data is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Player not found",
+        )
     return data
 
 
 app.mount("/", FastAPI(routes=webio_routes(pywebio_task_func)))
 
 
+# MARK: - Run server
 def run_server():
 
     import uvicorn
 
-    debug = os.environ.get("DEBUG", "False")
-    if debug == "True":
+    if app.debug:
         uvicorn.run(
             "mahjong_record_counter.fastapi_server:app",
             host="0.0.0.0",
