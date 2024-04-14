@@ -90,7 +90,6 @@ def pywebio_task_func():
                     label=f"{name}家:",
                     type=TEXT,
                     datalist=common_players if common_players else None,
-                    value=common_players[ind] if common_players else None,
                 ),
                 None,
                 put_input(
