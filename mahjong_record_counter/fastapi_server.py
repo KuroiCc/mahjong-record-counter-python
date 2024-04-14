@@ -10,7 +10,7 @@ from pywebio.platform.fastapi import webio_routes
 
 from mahjong_record_counter.pywebio_task_func import pywebio_task_func
 
-app = FastAPI(debug=bool(os.environ.get("DEBUG", "False")))
+app = FastAPI(debug=os.environ.get("DEBUG") == "True")
 
 
 # MARK: - Service functions
@@ -70,7 +70,10 @@ def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
 
 @app.middleware("http")
 async def secure_docs(request: Request, call_next):
-    if not app.debug and request.url.path in ["/docs", "/openapi.json"]:
+    # deal with root_path
+    root_path = request.scope.get("root_path", "").rstrip("/")
+    doc_url = [f"{root_path}/docs", f"{root_path}/openapi.json"]
+    if not app.debug and request.url.path in doc_url:
         try:
             authenticate(await security(request))
         except HTTPException as exc:
@@ -128,6 +131,7 @@ def run_server():
     import uvicorn
 
     if app.debug:
+        print("Running in debug mode")
         uvicorn.run(
             "mahjong_record_counter.fastapi_server:app",
             host="0.0.0.0",
