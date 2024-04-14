@@ -33,9 +33,13 @@ with open("./mahjong_record_counter/js_helper/fetchCommonPlayers.js", "r") as f:
 def pywebio_task_func():
     login_intent = eval_js("new URLSearchParams(location.search).get('wantLogin')")
     common_players = None
+    print(f"{login_intent=}")
 
     if login_intent == "yes":
-        common_players = eval_js(js_helper["fetchCommonPlayers"])
+        common_players = eval_js(
+            js_helper["fetchCommonPlayers"],
+            url=f"{os.getenv('COUNT_POINT_ROOT_PATH', '')}/common_players",
+        )
         if not isinstance(common_players, list) or len(common_players) == 0:
             common_players = None
 
